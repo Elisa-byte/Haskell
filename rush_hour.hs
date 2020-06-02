@@ -59,7 +59,7 @@ play board move =  if ((findOri board (getMoveTy move)) == UpDir) && ((getMoveDi
                    else if ((findOri board (getMoveTy move)) == UpDir) && ((getMoveDir move) == South) then checkMoveSouth board move
                    else if ((findOri board (getMoveTy move)) == RightDir) && ((getMoveDir move) == West)  then checkMoveWest board move
                    else if ((findOri board (getMoveTy move)) == RightDir) && ((getMoveDir move) == East)  then checkMoveEast board move
-                   else (board, False, True)                          
+                   else (board, False, False)                          
 
 getMove :: String -> Move
 getMove ['(',x,',', y,',',z,')'] = if (y == 'N') then (x, North, digitToInt z)
@@ -97,7 +97,7 @@ indexListVertNorth board move pos = (getVertNorth (index (clean board) (getMoveT
 
 --((List.findIndices(==index (clean board) (getMoveTy move)) (getVertNorth (index (clean board) (getMoveTy move)) 6 6))!!0) - (getMovePos move) >= 0)
 checkMoveNorth :: String -> Move -> (String, Bool, Bool)
-checkMoveNorth board move = if ((getCarLen board (getMoveTy move)) + (getMovePos move) <= 6) then
+checkMoveNorth board move = if (((getCarLen board (getMoveTy move)) + (getMovePos move) <= 6) && ((findIndNorth board move) - (getMovePos move) >= 0)) then
                                 if (getMovePos move) == 1 then 
                                    --indexListVertNorth (clean "aaab..\neffbc.\ne.==c.\nggh..d\n.ih.jj\n.ikkll\n") ('d',North,1) 1 : 18
                                    if ((clean board)!!((indexListVertNorth (clean board) move (getMovePos move))-1) == '.') then moveNorth (clean board) move (createNewCarPosListNorth (clean board) move (getMovePos move)) (createEmptySlotListNorth (clean board) move (getMovePos move))
@@ -162,7 +162,7 @@ indexListVertSouth board move pos = (getVertSouth (index (clean board) (getMoveT
 --(clean "aaabcd\neffbcd\ne.==.d\nggh...\n.ih...\n.ikk..\n")!!((indexListVertSouth(clean "aaabcd\neffbcd\ne.==.d\nggh...\n.ih...\n.ikk..\n") ('c',South,3) 3) -1) : '.'
 --(clean "aaabcd\neffbcd\ne.==.d\nggh...\n.ih...\n.ikk..\n")!!((indexListVertSouth(clean "aaabcd\neffbcd\ne.==.d\nggh...\n.ih...\n.ikk..\n") ('c',South,4) 4) -1) : '.'
 checkMoveSouth :: String -> Move -> (String, Bool, Bool) --(board, False, False)
-checkMoveSouth board move = if (((getCarLen board (getMoveTy move)) + (getMovePos move) <= 6) ) then
+checkMoveSouth board move = if (((getCarLen board (getMoveTy move)) + (getMovePos move) <= 6) && ((findIndNorth board move) + (findIndSouth board move) + (getMovePos move) <= 6) ) then
                                if (getMovePos move) == 1 then 
                                    if ((clean board)!!((indexListVertSouth(clean board) move 1) -1)   == '.') then moveSouth (clean board) move (createNewCarPosListSouth (clean board) move (getMovePos move)) (createEmptySlotListSouth (clean board) move (getMovePos move))
                                    else (clean board, False, False) --nu pot face mutarea data
@@ -272,7 +272,7 @@ indexNextPosEast board move pos = (getHor (index (clean board) (getMoveTy move))
 
 
 checkMoveEast :: String -> Move -> (String, Bool, Bool)
-checkMoveEast board move = if (((getCarLen board (getMoveTy move)) + (getMovePos move) <= 6)) then
+checkMoveEast board move = if (((getCarLen board (getMoveTy move)) + (getMovePos move) <= 6) && ((findIndWest board move) + (getCarLen board (getMoveTy move)) +(getMovePos move)  <= 6)) then
                                if (getMovePos move) == 1 then 
                                    if ((clean board)!!((indexNextPosEast (clean board) move 1) -1) == '.') then moveEast board move (createNewCarPosListEast (clean board) move (getMovePos move)) (createEmptySlotListEast (clean board) move (getMovePos move))
                                    else (board, False, False) --nu pot face mutarea data
